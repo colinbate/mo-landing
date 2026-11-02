@@ -1,4 +1,4 @@
-# Astro Starter Kit: Minimal
+# Mo Landing
 
 ```sh
 pnpm create astro@latest -- --template minimal
