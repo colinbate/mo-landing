@@ -1,0 +1,17 @@
+---
+import { campaign } from '../config/campaign';
+---
+
+<footer class="border-t border-line/70 py-10">
+  <div class="mx-auto flex max-w-6xl flex-col gap-6 px-4 text-sm text-ink-soft sm:flex-row sm:items-start sm:justify-between sm:px-6">
+    <div>
+      <p class="text-base font-bold text-ink">{campaign.name} · Movember {campaign.year}</p>
+      <p class="mt-1">Donations are processed by Movember. This site sets no cookies and runs no trackers.</p>
+    </div>
+    <ul class="flex flex-wrap gap-x-6 gap-y-2 font-semibold">
+      <li><a href={campaign.donateUrl} class="hover:text-ink">Donate</a></li>
+      <li><a href={campaign.profileUrl} class="hover:text-ink">Movember profile</a></li>
+      <li><a href={campaign.eventsUrl} class="hover:text-ink">Games</a></li>
+    </ul>
+  </div>
+</footer>

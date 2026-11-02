@@ -1,0 +1,34 @@
+---
+import { Image } from 'astro:assets';
+import firestash from '../assets/firestash.avif';
+import { campaign } from '../config/campaign';
+import DonateButton from './DonateButton.astro';
+
+const links = [
+  { href: '#moustache', label: 'Moustache' },
+  { href: '#events', label: 'Games' },
+  { href: '#about', label: 'Why' },
+];
+---
+
+<header class="border-b border-line/70">
+  <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
+    <a href="#top" class="flex items-center gap-3 text-lg font-bold leading-none tracking-tight">
+      <Image src={firestash} alt="" width={160} class="h-8 w-auto sm:h-9" loading="eager" />
+      <span>
+        {campaign.firstName}’s Movember{' '}
+        <span class="hidden text-ink-soft sm:inline">{campaign.year}</span>
+      </span>
+    </a>
+
+    <nav class="hidden items-center gap-6 text-sm font-semibold text-ink-soft md:flex" aria-label="Sections">
+      {links.map((link) => (
+        <a href={link.href} class="transition-colors hover:text-ink">
+          {link.label}
+        </a>
+      ))}
+    </nav>
+
+    <DonateButton href={campaign.donateUrl} />
+  </div>
+</header>

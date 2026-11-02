@@ -1,0 +1,307 @@
+---
+import { getImage } from "astro:assets";
+import { campaign } from "../config/campaign";
+import { getPhotos } from "../lib/photos";
+
+const photos = getPhotos();
+
+const sizes =
+    "(min-width: 1024px) 520px, (min-width: 640px) 560px, calc(100vw - 2rem)";
+
+const frames = await Promise.all(
+    photos.map(async (photo) => {
+        const optimized = await getImage({
+            src: photo.image,
+            widths: [480, 720, 1024],
+            format: "webp",
+            quality: 78,
+            sizes,
+        });
+        return {
+            day: photo.day,
+            dateLabel: photo.dateLabel,
+            src: optimized.src,
+            srcset: optimized.srcSet.attribute,
+            width: optimized.attributes.width,
+            height: optimized.attributes.height,
+        };
+    }),
+);
+
+const latest = frames.at(-1);
+const hasMany = frames.length > 1;
+---
+
+<section id="moustache" class="scroll-mt-6 bg-sand/60 py-14 sm:py-20">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:grid lg:grid-cols-12 lg:items-center lg:gap-12">
+        <div class="lg:col-span-5">
+            <h2 class="font-display text-4xl text-balance sm:text-5xl">
+                The moustache, day by day
+            </h2>
+            <p class="mt-4 text-lg leading-relaxed text-ink-soft">
+                One photo a day to track progress through November. Drag the
+                slider or hit play to watch it grow.
+            </p>
+            <p class="mt-3 text-ink-soft">
+                I started by shaving my existing beard and moustache off just
+                after midnight on the 1st. So don't let my beardless photos
+                startle you.
+            </p>
+        </div>
+
+        <div class="mt-8 lg:col-span-7 lg:mt-0">
+            {latest ? (
+                <div data-tracker class="mx-auto max-w-[560px]">
+                    <figure class="relative overflow-hidden rounded-3xl bg-ink shadow-md">
+                        <img
+                            data-frame
+                            src={latest.src}
+                            srcset={latest.srcset}
+                            sizes={sizes}
+                            width={latest.width}
+                            height={latest.height}
+                            alt={`${campaign.firstName} on day ${latest.day} of Movember ${campaign.year}`}
+                            class="aspect-square w-full object-cover"
+                            decoding="async"
+                            fetchpriority="high"
+                        />
+                        <figcaption
+                            data-label
+                            aria-live="polite"
+                            class="absolute bottom-3 left-3 rounded-full bg-ink/85 px-3.5 py-1.5 text-sm font-bold text-cream backdrop-blur-sm sm:bottom-4 sm:left-4 sm:text-base"
+                        >
+                            Day {latest.day} · {latest.dateLabel}
+                        </figcaption>
+                    </figure>
+
+                    {hasMany && (
+                        <div class="mt-4 flex items-center gap-2 sm:gap-3">
+                            <button
+                                type="button"
+                                data-prev
+                                aria-label="Previous day"
+                                class="grid size-11 shrink-0 place-items-center rounded-full border border-line bg-white text-ink transition-colors hover:bg-cream disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white"
+                            >
+                                <svg
+                                    width="20"
+                                    height="20"
+                                    viewBox="0 0 20 20"
+                                    fill="none"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        d="M12.5 4 6.5 10l6 6"
+                                        stroke="currentColor"
+                                        stroke-width="2.25"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+                                </svg>
+                            </button>
+
+                            <label class="flex min-w-0 flex-1 flex-col">
+                                <span class="sr-only">Choose a day</span>
+                                <input
+                                    type="range"
+                                    data-range
+                                    min="0"
+                                    max={frames.length - 1}
+                                    step="1"
+                                    value={frames.length - 1}
+                                    class="mo-range"
+                                    aria-valuetext={`Day ${latest.day}`}
+                                />
+                            </label>
+
+                            <button
+                                type="button"
+                                data-next
+                                aria-label="Next day"
+                                class="grid size-11 shrink-0 place-items-center rounded-full border border-line bg-white text-ink transition-colors hover:bg-cream disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white"
+                            >
+                                <svg
+                                    width="20"
+                                    height="20"
+                                    viewBox="0 0 20 20"
+                                    fill="none"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        d="m7.5 4 6 6-6 6"
+                                        stroke="currentColor"
+                                        stroke-width="2.25"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+                                </svg>
+                            </button>
+
+                            <button
+                                type="button"
+                                data-play
+                                aria-pressed="false"
+                                class="inline-flex h-11 shrink-0 items-center gap-2 rounded-full bg-ink px-4 text-sm font-bold text-cream transition-colors hover:bg-ink/85"
+                            >
+                                <svg
+                                    data-icon-play
+                                    width="14"
+                                    height="14"
+                                    viewBox="0 0 14 14"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        d="M3 1.5v11l9-5.5z"
+                                        fill="currentColor"
+                                    />
+                                </svg>
+                                <svg
+                                    data-icon-pause
+                                    width="14"
+                                    height="14"
+                                    viewBox="0 0 14 14"
+                                    aria-hidden="true"
+                                    hidden
+                                >
+                                    <path
+                                        d="M2.5 1.5h3v11h-3zM8.5 1.5h3v11h-3z"
+                                        fill="currentColor"
+                                    />
+                                </svg>
+                                <span data-play-text>Play</span>
+                            </button>
+                        </div>
+                    )}
+
+                    <script
+                        type="application/json"
+                        data-frames
+                        set:html={JSON.stringify(frames)}
+                    />
+                </div>
+            ) : (
+                <div class="mx-auto grid aspect-square max-w-[560px] place-items-center rounded-3xl border border-dashed border-line bg-white/60 p-8 text-center text-ink-soft">
+                    <p>The first photo goes up on November 1.</p>
+                </div>
+            )}
+        </div>
+    </div>
+</section>
+
+<script>
+    interface Frame {
+        day: number;
+        dateLabel: string;
+        src: string;
+        srcset: string;
+        width: number;
+        height: number;
+    }
+
+    function setupTracker(root: HTMLElement) {
+        const data = root.querySelector<HTMLScriptElement>("[data-frames]");
+        const img = root.querySelector<HTMLImageElement>("[data-frame]");
+        const label = root.querySelector<HTMLElement>("[data-label]");
+        if (!data || !img || !label) return;
+
+        const frames: Frame[] = JSON.parse(data.textContent || "[]");
+        if (frames.length < 2) return;
+
+        const range = root.querySelector<HTMLInputElement>("[data-range]");
+        const prev = root.querySelector<HTMLButtonElement>("[data-prev]");
+        const next = root.querySelector<HTMLButtonElement>("[data-next]");
+        const play = root.querySelector<HTMLButtonElement>("[data-play]");
+        const playText = root.querySelector<HTMLElement>("[data-play-text]");
+        const iconPlay = root.querySelector<SVGElement>("[data-icon-play]");
+        const iconPause = root.querySelector<SVGElement>("[data-icon-pause]");
+
+        const reducedMotion = window.matchMedia(
+            "(prefers-reduced-motion: reduce)",
+        ).matches;
+        const frameDuration = reducedMotion ? 1100 : 650;
+        const altPrefix = img.alt.replace(/day \d+/, "day {day}");
+
+        let index = frames.length - 1;
+        let timer: number | undefined;
+        const preloaded = new Set<number>();
+
+        function preload(i: number) {
+            if (i < 0 || i >= frames.length || preloaded.has(i)) return;
+            preloaded.add(i);
+            const probe = new Image();
+            probe.sizes = img!.sizes;
+            probe.srcset = frames[i].srcset;
+            probe.src = frames[i].src;
+        }
+
+        function show(i: number) {
+            index = Math.max(0, Math.min(frames.length - 1, i));
+            const frame = frames[index];
+            img!.srcset = frame.srcset;
+            img!.src = frame.src;
+            img!.alt = altPrefix.replace("{day}", String(frame.day));
+            label!.textContent = `Day ${frame.day} · ${frame.dateLabel}`;
+            if (range) {
+                range.value = String(index);
+                range.setAttribute("aria-valuetext", `Day ${frame.day}`);
+            }
+            if (prev) prev.disabled = index === 0;
+            if (next) next.disabled = index === frames.length - 1;
+            preload(index - 1);
+            preload(index + 1);
+        }
+
+        function stop() {
+            if (timer === undefined) return;
+            window.clearInterval(timer);
+            timer = undefined;
+            play?.setAttribute("aria-pressed", "false");
+            if (playText) playText.textContent = "Play";
+            iconPlay?.removeAttribute("hidden");
+            iconPause?.setAttribute("hidden", "");
+        }
+
+        function start() {
+            if (timer !== undefined) return;
+            // Restart from the beginning if we're already at the end.
+            if (index === frames.length - 1) show(0);
+            frames.forEach((_, i) => preload(i));
+            play?.setAttribute("aria-pressed", "true");
+            if (playText) playText.textContent = "Pause";
+            iconPlay?.setAttribute("hidden", "");
+            iconPause?.removeAttribute("hidden");
+            timer = window.setInterval(() => {
+                if (index >= frames.length - 1) {
+                    stop();
+                    return;
+                }
+                show(index + 1);
+            }, frameDuration);
+        }
+
+        prev?.addEventListener("click", () => {
+            stop();
+            show(index - 1);
+        });
+        next?.addEventListener("click", () => {
+            stop();
+            show(index + 1);
+        });
+        range?.addEventListener("input", () => {
+            stop();
+            show(Number(range.value));
+        });
+        play?.addEventListener("click", () =>
+            timer === undefined ? start() : stop(),
+        );
+
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden) stop();
+        });
+
+        show(index);
+    }
+
+    document
+        .querySelectorAll<HTMLElement>("[data-tracker]")
+        .forEach(setupTracker);
+</script>

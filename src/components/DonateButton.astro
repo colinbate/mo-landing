@@ -1,0 +1,28 @@
+---
+interface Props {
+  href: string;
+  size?: 'sm' | 'lg';
+  class?: string;
+}
+
+const { href, size = 'sm', class: className = '' } = Astro.props;
+
+const sizeClasses =
+  size === 'lg'
+    ? 'px-7 py-3.5 text-lg'
+    : 'px-4 py-2 text-sm sm:px-5 sm:text-base';
+---
+
+<a
+  href={href}
+  target="_blank"
+  rel="noopener"
+  class:list={[
+    'inline-flex items-center justify-center gap-2 rounded-full bg-flame font-bold text-white',
+    'transition-colors hover:bg-flame-deep focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-flame',
+    sizeClasses,
+    className,
+  ]}
+>
+  <slot>Donate</slot>
+</a>

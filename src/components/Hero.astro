@@ -1,0 +1,101 @@
+---
+import { Image } from "astro:assets";
+import firestash from "../assets/firestash.avif";
+import { campaign } from "../config/campaign";
+import { formatMoney } from "../lib/movember";
+import FundraisingStats from "./FundraisingStats.astro";
+import ProgressBar from "./ProgressBar.astro";
+import DonateButton from "./DonateButton.astro";
+
+interface Props {
+    /** Day number of the most recent photo, or null if none yet. */
+    latestDay: number | null;
+}
+
+const { latestDay } = Astro.props;
+---
+
+<section class="mx-auto max-w-6xl px-4 pt-10 pb-12 sm:px-6 sm:pt-14 lg:grid lg:grid-cols-12 lg:items-center lg:gap-12 lg:pt-20 lg:pb-20">
+    <div class="lg:col-span-7">
+        <Image
+            src={firestash}
+            alt=""
+            width={520}
+            class="h-auto w-44 sm:w-56"
+            loading="eager"
+        />
+
+        <h1 class="mt-6 font-display text-5xl leading-[1.02] text-balance sm:text-6xl lg:text-7xl">
+            {campaign.headline}
+        </h1>
+
+        <p class="mt-5 max-w-xl text-lg leading-relaxed text-ink-soft sm:text-xl">
+            {campaign.intro}
+        </p>
+
+        <p class="mt-4 max-w-xl text-base leading-relaxed text-ink-soft">
+            {campaign.movemberBlurb}
+        </p>
+
+        {latestDay !== null && (
+            <p class="mt-6 inline-flex items-center gap-2 rounded-full bg-sand px-4 py-2 text-sm font-semibold">
+                <span
+                    class="inline-block size-2 rounded-full bg-flame"
+                    aria-hidden="true"
+                />
+                Day {latestDay} of {campaign.campaignDays}
+                <a
+                    href="#moustache"
+                    class="ml-1 underline decoration-flame decoration-2 underline-offset-4 hover:text-flame-deep"
+                >
+                    See the moustache
+                </a>
+            </p>
+        )}
+    </div>
+
+    <div id="donate" class="mt-10 scroll-mt-6 lg:col-span-5 lg:mt-0">
+        <FundraisingStats server:defer>
+            <div
+                slot="fallback"
+                class="rounded-3xl border border-line bg-white p-6 shadow-sm sm:p-8"
+                aria-busy="true"
+            >
+                <p class="text-sm font-semibold text-ink-soft">Raised so far</p>
+                <p
+                    class="mt-1 text-5xl tracking-tight text-ink/20 sm:text-6xl font-display"
+                    aria-hidden="true"
+                >
+                    $—
+                </p>
+                <p class="mt-2 text-ink-soft">
+                    of a{" "}
+                    <span class="font-semibold text-ink">
+                        {formatMoney(campaign.fallbackGoal)}
+                    </span>{" "}
+                    goal
+                </p>
+                <div class="mt-5">
+                    <ProgressBar
+                        percent={0}
+                        label="Fundraising progress"
+                        indeterminate
+                    />
+                    <p class="mt-2 text-sm font-semibold text-ink-soft">
+                        Fetching the latest total
+                    </p>
+                </div>
+                <DonateButton
+                    href={campaign.donateUrl}
+                    size="lg"
+                    class="mt-6 w-full sm:w-auto"
+                >
+                    Donate now
+                </DonateButton>
+                <p class="mt-4 text-xs text-ink-soft">
+                    Donations are processed by Movember.
+                </p>
+            </div>
+        </FundraisingStats>
+    </div>
+</section>

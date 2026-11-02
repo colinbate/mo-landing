@@ -1,1 +1,73 @@
 @import "tailwindcss";
+
+@theme {
+  --font-display: var(--font-concert), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  --color-cream: #fbf6ee;
+  --color-sand: #f1e8d8;
+  --color-line: #e2d6c2;
+  --color-ink: #1a1614;
+  --color-ink-soft: #57504a;
+  --color-flame: #e4461b;
+  --color-flame-deep: #b5310f;
+  --color-ember: #f6a21e;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  text-rendering: optimizeLegibility;
+}
+
+/* Range slider used by the moustache tracker */
+.mo-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 2.5rem;
+  background: transparent;
+  cursor: pointer;
+}
+.mo-range:focus-visible {
+  outline: 3px solid var(--color-flame);
+  outline-offset: 4px;
+  border-radius: 9999px;
+}
+.mo-range::-webkit-slider-runnable-track {
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: var(--color-line);
+}
+.mo-range::-moz-range-track {
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: var(--color-line);
+}
+.mo-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-top: -0.625rem;
+  border-radius: 9999px;
+  background: var(--color-flame);
+  border: 3px solid var(--color-cream);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
+}
+.mo-range::-moz-range-thumb {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 9999px;
+  background: var(--color-flame);
+  border: 3px solid var(--color-cream);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
+}

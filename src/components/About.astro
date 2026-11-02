@@ -1,0 +1,38 @@
+---
+import { campaign } from '../config/campaign';
+import DonateButton from './DonateButton.astro';
+---
+
+<section id="about" class="scroll-mt-6 border-t border-line/70 py-14 sm:py-20">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:grid lg:grid-cols-12 lg:gap-12">
+    <div class="lg:col-span-7">
+      <h2 class="font-display text-4xl text-balance sm:text-5xl">Why I do this</h2>
+      <div class="mt-5 space-y-4 text-lg leading-relaxed text-ink-soft">
+        {campaign.story.map((paragraph) => <p>{paragraph}</p>)}
+      </div>
+      <DonateButton href={campaign.donateUrl} size="lg" class="mt-8">Donate to my campaign</DonateButton>
+    </div>
+
+    <aside class="mt-12 rounded-3xl bg-ink p-6 text-cream sm:p-8 lg:col-span-5 lg:mt-0">
+      <h3 class="font-display text-3xl">About Movember</h3>
+      <p class="mt-4 leading-relaxed text-cream/80">
+        Movember is a global charity focused on men’s health: prostate cancer, testicular cancer, mental health and suicide prevention. Money raised funds research, early-detection work and support programs, and the moustaches get people talking about it.
+      </p>
+      <p class="mt-4 leading-relaxed text-cream/80">
+        Men die on average four to five years earlier than women, and much of that gap is preventable. Movember exists to close it.
+      </p>
+      <ul class="mt-6 space-y-2 font-semibold">
+        <li>
+          <a href={campaign.movemberUrl} class="underline decoration-ember decoration-2 underline-offset-4 hover:text-ember">
+            Movember Canada
+          </a>
+        </li>
+        <li>
+          <a href={campaign.profileUrl} class="underline decoration-ember decoration-2 underline-offset-4 hover:text-ember">
+            My official Movember page
+          </a>
+        </li>
+      </ul>
+    </aside>
+  </div>
+</section>

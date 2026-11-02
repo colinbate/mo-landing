@@ -1,43 +1,51 @@
 # Mo Landing
 
+Personal Movember fundraising page. Astro + Tailwind, deployed to Cloudflare Workers.
+
+The page is prerendered. The only thing rendered at request time is the fundraising card, which is an Astro server island that reads the Movember API through `src/lib/movember.ts` and caches the result in memory for 15 minutes.
+
+## Commands
+
 ```sh
-pnpm create astro@latest -- --template minimal
+pnpm install
+pnpm dev              # http://localhost:4342
+pnpm build            # builds to dist/
+pnpm deploy           # build and deploy with wrangler
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Each November
 
-## 🚀 Project Structure
+1. Edit `src/config/campaign.ts`: year, goal fallback, copy, event details and links.
+2. Empty `src/assets/mo/` and add this year's photos.
+3. Set `site` in `astro.config.mjs` if the domain changes.
 
-Inside of your Astro project, you'll see the following folders and files:
+## Daily photos
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+Drop square photos into `src/assets/mo/` named by campaign day:
+
+```
+src/assets/mo/day-01.jpg
+src/assets/mo/day-02.jpg
+...
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+Day 1 maps to the `photoStart` date in `src/config/campaign.ts` (November 1). Photos are picked up automatically, sorted by day number, and optimized at build time. Missing days are fine.
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+## Project layout
 
-Any static assets, like images, can be placed in the `public/` directory.
+```
+src/
+  config/campaign.ts     everything that changes year to year
+  lib/movember.ts        Movember API adapter + normalized data model
+  lib/cache.ts           cache interface (memory now, KV later)
+  lib/photos.ts          loads and sorts the daily photos
+  components/            page sections
+  layouts/Base.astro     document shell, fonts, meta tags
+  pages/index.astro      the page
+  assets/mo/             daily photos
+  assets/firestash.avif  the flaming moustache
+```
 
-## 🧞 Commands
+## Swapping the cache for Cloudflare KV
 
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Implement `CacheStore` from `src/lib/cache.ts` on top of a KV binding and call `setFundraisingCache()` from middleware or the server island before `getFundraising()` runs. Nothing else needs to change.

@@ -1,0 +1,67 @@
+---
+import { campaign } from "../config/campaign";
+
+const { events } = campaign;
+---
+
+<section id="events" class="scroll-mt-6 py-14 sm:py-20">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6">
+        <div class="max-w-2xl">
+            <h2 class="font-display text-4xl text-balance sm:text-5xl">
+                Roll dice, do some good
+            </h2>
+            <p class="mt-4 text-lg leading-relaxed text-ink-soft">
+                Alongside growing the moustache, I run a series of tabletop
+                one-shots during November. Admission is a donation to my
+                campaign, in any amount. Players of every experience level are
+                welcome, including people who have never touched a twenty-sided
+                die.
+            </p>
+        </div>
+
+        <article class="mt-10 overflow-hidden rounded-3xl border border-line bg-white shadow-sm lg:grid lg:grid-cols-12">
+            <div class="p-6 sm:p-8 lg:col-span-7 lg:p-10">
+                <h3 class="font-display text-4xl sm:text-5xl">
+                    {events.title}
+                </h3>
+                <p class="mt-5 leading-relaxed text-ink-soft">
+                    {events.summary}
+                </p>
+                <p class="mt-4 leading-relaxed text-ink-soft">{events.note}</p>
+
+                <a
+                    href={campaign.eventsUrl}
+                    class="mt-7 inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 font-bold text-cream transition-colors hover:bg-ink/85 focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-flame"
+                >
+                    See dates and sign up
+                    <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 16 16"
+                        fill="none"
+                        aria-hidden="true"
+                    >
+                        <path
+                            d="M3 8h10M9 4l4 4-4 4"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+                    </svg>
+                </a>
+            </div>
+
+            <dl class="grid gap-4 border-t border-line bg-sand/50 p-6 sm:grid-cols-2 sm:p-8 lg:col-span-5 lg:grid-cols-1 lg:content-start lg:border-t-0 lg:border-l lg:p-10">
+                {events.details.map((item) => (
+                    <div>
+                        <dt class="text-sm font-semibold text-ink-soft">
+                            {item.label}
+                        </dt>
+                        <dd class="mt-0.5 font-semibold">{item.value}</dd>
+                    </div>
+                ))}
+            </dl>
+        </article>
+    </div>
+</section>

@@ -1,0 +1,73 @@
+---
+/**
+ * Rendered on the server at request time (server island) so the page itself
+ * stays static while the totals stay fresh.
+ */
+import { campaign } from "../config/campaign";
+import { formatMoney, getFundraising } from "../lib/movember";
+import DonateButton from "./DonateButton.astro";
+import ProgressBar from "./ProgressBar.astro";
+
+const { data, stale } = await getFundraising();
+
+const goal = data?.goal ?? campaign.fallbackGoal;
+const donateUrl = data?.donateUrl ?? campaign.donateUrl;
+const reached = data ? data.raised >= data.goal : false;
+---
+
+<div class="rounded-3xl border border-line bg-white p-6 shadow-sm sm:p-8">
+    {data ? (
+        <>
+            <p class="text-sm font-semibold text-ink-soft">Raised so far</p>
+            <p class="mt-1 text-5xl tracking-tight sm:text-6xl font-display">
+                {formatMoney(data.raised, data.currency)}
+            </p>
+            <p class="mt-2 text-ink-soft">
+                of a{" "}
+                <span class="font-semibold text-ink">
+                    {formatMoney(goal, data.currency)}
+                </span>{" "}
+                goal
+            </p>
+
+            <div class="mt-5">
+                <ProgressBar
+                    percent={data.percent}
+                    label="Fundraising progress"
+                />
+                <p class="mt-2 text-sm font-semibold text-ink-soft">
+                    {reached
+                        ? `Goal reached, ${data.rawPercent}% and counting`
+                        : `${data.percent}% of the way there`}
+                </p>
+            </div>
+        </>
+    ) : (
+        <>
+            <p class="text-sm font-semibold text-ink-soft">Fundraising goal</p>
+            <p class="mt-1 text-5xl font-extrabold tracking-tight sm:text-6xl">
+                {formatMoney(goal)}
+            </p>
+            <p class="mt-2 text-ink-soft">
+                The live total is unavailable right now. Donations still go
+                straight to Movember.
+            </p>
+            <div class="mt-5">
+                <ProgressBar
+                    percent={0}
+                    label="Fundraising progress"
+                    indeterminate
+                />
+            </div>
+        </>
+    )}
+
+    <DonateButton href={donateUrl} size="lg" class="mt-6 w-full sm:w-auto">
+        Donate now
+    </DonateButton>
+
+    <p class="mt-4 text-xs text-ink-soft">
+        Donations are processed by Movember
+        {stale ? ". Totals shown may be a few minutes behind." : "."}
+    </p>
+</div>

@@ -1,0 +1,9 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "mo-landing",
+  "compatibility_date": "2026-10-20",
+  "compatibility_flags": ["nodejs_compat"],
+  "routes": [
+    { "pattern": "movember.colinbate.com", "custom_domain": true }
+  ]
+}

@@ -1,0 +1,29 @@
+---
+interface Props {
+  /** 0 to 100. */
+  percent: number;
+  label: string;
+  indeterminate?: boolean;
+}
+
+const { percent, label, indeterminate = false } = Astro.props;
+const clamped = Math.max(0, Math.min(100, percent));
+---
+
+<div
+  class="h-4 w-full overflow-hidden rounded-full bg-sand"
+  role="progressbar"
+  aria-label={label}
+  aria-valuemin="0"
+  aria-valuemax="100"
+  aria-valuenow={indeterminate ? undefined : clamped}
+>
+  <div
+    class:list={[
+      'h-full rounded-full bg-gradient-to-r from-flame-deep via-flame to-ember',
+      indeterminate && 'animate-pulse opacity-40 motion-reduce:animate-none',
+    ]}
+    style={`width: ${indeterminate ? 100 : Math.max(clamped, 2)}%`}
+  >
+  </div>
+</div>
